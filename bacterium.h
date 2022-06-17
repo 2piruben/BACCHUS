@@ -19,12 +19,12 @@
 #include <string>
 
 
-class chemical{
-	std::string name;
-	double production;
-	double degradation;
-	double poison;
-};
+// class chemical{
+// 	std::string name;
+// 	double production;
+// 	double degradation;
+// 	double poison;
+// };
 
 
 
@@ -33,7 +33,7 @@ class bacterium{
 protected:
 
 	int id;
-	vec2d pos[2]; // position of eadh pole of the bacterium
+	vec2d pos[2]; // position of each pole of the bacterium
 	double r; // bacterium width
 	double age;
 	double growth_rate;
@@ -44,7 +44,7 @@ protected:
 	double friction_trans; // friction of bacterium
 	double mem; // membrane stiffness (parameter controlling interaction forces)
 	int type; // dummy label for cell type
-	vector<chemical>; // vector with the chemicals that 
+//  #vector<chemical>; // vector with the chemicals that 
 
 public:
 
@@ -54,21 +54,21 @@ public:
 	void get_centre(vec2d &output);
 	void get_orientation(vec2d &output);
 	void get_length(double &length_);
+	double get_length();
 	void get_angle(double &angle_);
-	double length();
-	double length0();
-	double angle();
-	double radius();
-	vec2d centre();
-	vec2d current_force_1();
-	vec2d current_force_2();
-	vec2d pole1();
-	vec2d pole2();
+	double get_length0();
+	double get_angle();
+	double get_radius();
+	vec2d get_centre();
+	vec2d get_current_force_1();
+	vec2d get_current_force_2();
+	vec2d get_pole1();
+	vec2d get_pole2();
 	void set_type(int type_);
-	int type_bac();
+	int get_type();
 
 
-	int id_bac(){return id;};
+	int get_id(){return id;};
 	double radius_bac(){return r;};
 	// We want functions that transform points to 3 different coordinate systems
 	// glob -> with respect to the dish (centered at 0,0)

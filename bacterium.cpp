@@ -43,46 +43,46 @@
 		angle_ = temp_vec.angle();
 	}
 
-	double bacterium::angle(){
+	double bacterium::get_angle(){
 		vec2d temp_vec;
 		get_orientation(temp_vec);
 		return temp_vec.angle();
 	}
 
-	double bacterium::length(){
+	double bacterium::get_length(){
 		return dist(pos[0],pos[1]);
 	}
 
-	double bacterium::length0(){
+	double bacterium::get_length0(){
 		return l0;
 	}
 
 
-	double bacterium::radius(){
+	double bacterium::get_radius(){
 		return r;
 	}
 
-	int bacterium::type_bac(){
+	int bacterium::get_type(){
 		return type;
 	}
 
-	vec2d bacterium::centre(){
+	vec2d bacterium::get_centre(){
 		return (pos[0]+pos[1])/2.0;
 	}
 
-	vec2d bacterium::current_force_1(){
+	vec2d bacterium::get_current_force_1(){
 		return force[0];
 	}
 
-	vec2d bacterium::current_force_2(){
+	vec2d bacterium::get_current_force_2(){
 		return force[1];
 	}
 
-	vec2d bacterium::pole1(){
+	vec2d bacterium::get_pole1(){
 		return pos[0];
 	}
 
-	vec2d bacterium::pole2(){
+	vec2d bacterium::get_pole2(){
 		return pos[1];
 	}
 
@@ -100,7 +100,7 @@
 		vec2d temp_vec;
 		get_centre(temp_vec);
 		temp_vec = output - temp_vec;
-		output = rotate(temp_vec,-1.0*angle());
+		output = rotate(temp_vec,-1.0*get_angle());
 	}
 
 	void bacterium::get_glob2shift(vec2d &output){
@@ -110,7 +110,7 @@
 
 	void bacterium::get_rot2glob(vec2d &output){
 		// Opposite to vec2bac, given a vector in the reference system of the bacterium orientated, return the vector in the reference system of the dish
-		output = rotate(output,angle());
+		output = rotate(output,get_angle());
 		output += (pos[0]+pos[1])/2;
 	}
 
@@ -121,11 +121,11 @@
 
 	void bacterium::get_rot2shift(vec2d &output){
 		// Opposite to vec2bac, given a vector in the reference system of the bacterium orientated, return the vector in the reference system of the dish
-		output = rotate(output,angle());
+		output = rotate(output,get_angle());
 	}
 
 	void bacterium::get_shift2rot(vec2d &output){
-		output = rotate(output,-1.0*angle());
+		output = rotate(output,-1.0*get_angle());
 	}
 
 	void bacterium::move(vec2d Dx){
@@ -185,7 +185,7 @@
 
 	bool bacterium::division_ready(){
 		//std::cout<<"division condition "<<length<<' '<<division_length<<'\n';
-		return (length()>division_length);
+		return (get_length()>division_length);
 	}
 
 	void bacterium::get_daughter1_poles(vec2d& p1, vec2d& p2){
@@ -267,7 +267,7 @@ void update_force_between(bacterium &b1, bacterium &b2){
 				b_side = &b2;
 				b_pole = &b1;
 			}
-			length = b_side->length();
+			length = b_side->get_length();
 			for(int ip=0;ip<2;ip++){ // pole of the bacterium that is interacting with its pole
 				v1 = b_pole->pos[ip]; // position of interacting pole
 				b_side->get_glob2rot(v1); // position of interacting pole from ref systems of b_side rotated

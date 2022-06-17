@@ -128,7 +128,7 @@
 
     void population::print_population(){
     	for(std::list<bacterium*>::iterator cell_ptr = cells_alive.begin(); cell_ptr != cells_alive.end(); ++cell_ptr) {
-    		std::cout<<(*cell_ptr)->id_bac()<<' '<<(*cell_ptr)->centre()[0]<<' '<<(*cell_ptr)->centre()[1]<<'\n';
+    		std::cout<<(*cell_ptr)->get_id()<<' '<<(*cell_ptr)->get_centre()[0]<<' '<<(*cell_ptr)->get_centre()[1]<<'\n';
     	}
     }
 
@@ -137,10 +137,10 @@
     	ofilename<<"output/population"<<std::setprecision(5)<<time<<".out";
     	trajfile.open(ofilename.str()); // output trajectory
     	for(std::list<bacterium*>::iterator cell_ptr = cells_alive.begin(); cell_ptr != cells_alive.end(); ++cell_ptr) {
-    		trajfile<<(*cell_ptr)->id_bac()<<' '<<trajfile<<(*cell_ptr)->type()<<' '<<(*cell_ptr)->centre()[0]<<' '<<(*cell_ptr)->centre()[1]<<' ';
-    		trajfile<<(*cell_ptr)->angle()<<' '<<(*cell_ptr)->length()<<' '<<(*cell_ptr)->length0()<<' ';
-    		trajfile<<(*cell_ptr)->current_force_1()[0]<<' '<<(*cell_ptr)->current_force_1()[1]<<' ';	
-    		trajfile<<(*cell_ptr)->current_force_2()[0]<<' '<<(*cell_ptr)->current_force_2()[1]<<'\n';	
+    		trajfile<<(*cell_ptr)->get_id()<<' '<<(*cell_ptr)->get_type()<<' '<<(*cell_ptr)->get_centre()[0]<<' '<<(*cell_ptr)->get_centre()[1]<<' ';
+    		trajfile<<(*cell_ptr)->get_angle()<<' '<<(*cell_ptr)->get_length()<<' '<<(*cell_ptr)->get_length0()<<' ';
+    		trajfile<<(*cell_ptr)->get_current_force_1()[0]<<' '<<(*cell_ptr)->get_current_force_1()[1]<<' ';	
+    		trajfile<<(*cell_ptr)->get_current_force_2()[0]<<' '<<(*cell_ptr)->get_current_force_2()[1]<<'\n';	
     	}
     	trajfile.close();
     }
