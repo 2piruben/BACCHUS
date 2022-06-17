@@ -16,6 +16,7 @@ Bacchus is a hybrid agent-based model simulating bacterial colonies in which eac
 -  **`algebra2d.cpp`, `algebra2d.h`** library to perform vector operations in the plane
 -  **`pars.in`** input parameter file
 -  **`main.cpp`** main file to run the simulation
+-  **`popplot.py`** Python code to create colony images and videos from the output of main. 
 
 
 # TODO list:
