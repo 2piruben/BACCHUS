@@ -11,16 +11,19 @@ RM = rm -f
 
 
 main: main.o
-	$(GPP) $(CFLAGS) $(LFLAGS) -o main main.o bacterium.o algebra2d.o population.o
+	$(GPP) $(CFLAGS) $(LFLAGS) -o main main.o bacterium.o algebra2d.o population.o molecular.o
 
-main.o: main.cpp bacterium.o population.o algebra2d.o
+main.o: main.cpp bacterium.o population.o algebra2d.o molecular.o
 	$(GPP) $(CFLAGS) -c main.cpp
 
 population.o: population.cpp population.h bacterium.o algebra2d.o
 	$(GPP) $(CFLAGS) -c population.cpp
 
-bacterium.o: bacterium.cpp bacterium.h algebra2d.o
+bacterium.o: bacterium.cpp bacterium.h algebra2d.o molecular.o
 	$(GPP) $(CFLAGS) -c bacterium.cpp
+
+molecular.o: molecular.cpp molecular.h
+	$(GPP) $(CFLAGS) -c molecular.cpp
 
 algebra2d.o: algebra2d.cpp algebra2d.h
 	$(GPP) $(CFLAGS) -c algebra2d.cpp

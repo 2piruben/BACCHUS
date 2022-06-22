@@ -50,7 +50,7 @@
 		return time;
 	}
 
-	void population::initialize_two(){ // start population with two parallel bacteria
+	void population::initialize_two(Cytoplasm cyto){ // start population with two parallel bacteria
 		std::cout<<"Initizalizing population...\n";
 		vec2d posinit1,posinit2;
 		double angleinit = 3.14159/4;
@@ -59,7 +59,12 @@
 		posinit2[0] = length*cos(angleinit);
 		posinit2[1] = length*sin(angleinit);
 		std::cout<<"Init bac 1 "<< posinit1[0] <<' '<< posinit1[1]<<'\n';
-		cells.emplace_back(next_id(), r, posinit1, posinit2, mean_growth_rate*(1+gsl_ran_gaussian(rng,0.2)), 2.0,mem, friction_trans, springk);
+		cells.emplace_back(next_id(), r, posinit1, posinit2, mean_growth_rate*(1+gsl_ran_gaussian(rng,0.2)), 2.0,mem, friction_trans, springk, cyto);
+		// cells.front().cyto.add_species(1.0,"GFP");
+		// HillRepReaction HR1(1,1,1,0,0);
+		// cells.front().cyto.add_reaction(&HR1);
+		// cells.front().cyto.react(0.1);
+		// cells.front().cyto.print();
 
 		posinit1[0] = 4*0.2*cos(angleinit);
 		posinit1[1] = 0;
@@ -67,37 +72,38 @@
 		posinit2[1] = length*sin(angleinit);
 
 		std::cout<<"Init bac 2 "<< posinit1[0] <<' '<< posinit1[1]<<'\n';
-		cells.emplace_back(next_id(), r, posinit1, posinit2, mean_growth_rate*(1+gsl_ran_gaussian(rng,0.2)), 2.0,mem, friction_trans, springk);
+		cells.emplace_back(next_id(), r, posinit1, posinit2, mean_growth_rate*(1+gsl_ran_gaussian(rng,0.2)), 2.0,mem, friction_trans, springk, cyto);
 		for(std::list<bacterium>::iterator cell_ptr = cells.begin(); cell_ptr != cells.end(); ++cell_ptr){
 		// adding pointer to the cells to the alive list
 			cells_alive.push_back(&*cell_ptr);	
 		}
 	}
 
+
+
 	void population::evolve(){ // evolve the popualtion a time step dt
 		/// growth and division
 		// std::cout<<"################# time: "<<time<<'\n';
+
 		for(std::list<bacterium*>::iterator cell_ptr = cells_alive.begin(); cell_ptr != cells_alive.end(); ++cell_ptr) {
 			(*cell_ptr)->reset_force();
-			// growth
+			(*cell_ptr)->cyto.react(dt);
 			(*cell_ptr)->grow(dt);
 			if ((*cell_ptr)->division_ready()) 
     		{// division
-    			vec2d pole1,pole2;
     			// std::cout<<"Dividing cell at "<<(*cell_ptr)->centre()[0]<<' '<<(*cell_ptr)->centre()[1]<<" \n";
     			// adding cell to dead list
     			cells_dead.push_back(*cell_ptr);
     			// finding new poles of daughter 1 and adding it to cells
-    			(*cell_ptr)->get_daughter1_poles(pole1,pole2);
-    			cells.emplace_back(next_id(),r,pole1,pole2, mean_growth_rate*(1+gsl_ran_gaussian(rng,0.2)),2.0,mem, friction_trans, springk);
+    			cells.push_back((*cell_ptr)->get_daughter1(next_id()));
+    			cells.back().set_growth_rate(mean_growth_rate*(1+gsl_ran_gaussian(rng,0.2)));
     			cells_alive.push_back(&cells.back());
     			// std::cout<<"Created cell at"<<cells.back().centre()[0]<<' '<<cells.back().centre()[1]<<" \n";
 
-    			// finding new poles of daughter 2 and adding it to cells
-    			(*cell_ptr)->get_daughter2_poles(pole1,pole2);
-    			cells.emplace_back(next_id(),r,pole1,pole2, mean_growth_rate*(1+gsl_ran_gaussian(rng,0.2)),2.0,mem, friction_trans, springk);
-    			// std::cout<<"Created cell at"<<cells.back().centre()[0]<<' '<<cells.back().centre()[1]<<" \n";
+    			// finding new poles of daughter 2 and adding it to cell
+				cells.push_back((*cell_ptr)->get_daughter2(next_id()));    			// std::cout<<"Created cell at"<<cells.back().centre()[0]<<' '<<cells.back().centre()[1]<<" \n";
     			cells_alive.push_back(&cells.back());
+    			cells.back().set_growth_rate(mean_growth_rate*(1+gsl_ran_gaussian(rng,0.2)));
     			// removing pointer to old cell
     			cells_alive.erase(cell_ptr);
     		}
@@ -137,10 +143,8 @@
     	ofilename<<"output/population"<<std::setprecision(5)<<time<<".out";
     	trajfile.open(ofilename.str()); // output trajectory
     	for(std::list<bacterium*>::iterator cell_ptr = cells_alive.begin(); cell_ptr != cells_alive.end(); ++cell_ptr) {
-    		trajfile<<(*cell_ptr)->get_id()<<' '<<(*cell_ptr)->get_type()<<' '<<(*cell_ptr)->get_centre()[0]<<' '<<(*cell_ptr)->get_centre()[1]<<' ';
-    		trajfile<<(*cell_ptr)->get_angle()<<' '<<(*cell_ptr)->get_length()<<' '<<(*cell_ptr)->get_length0()<<' ';
-    		trajfile<<(*cell_ptr)->get_current_force_1()[0]<<' '<<(*cell_ptr)->get_current_force_1()[1]<<' ';	
-    		trajfile<<(*cell_ptr)->get_current_force_2()[0]<<' '<<(*cell_ptr)->get_current_force_2()[1]<<'\n';	
+    		trajfile<<(*cell_ptr)->get_str_physics()<<' ';
+    		trajfile<<(*cell_ptr)->cyto.get_str_concentrations()<<'\n';
     	}
     	trajfile.close();
     }

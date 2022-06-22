@@ -3,18 +3,19 @@
 int main(int argc, char* argv[]){
  	//std::cout<<"starting\n";
 	population colony(10,"pars.in");
+	Cytoplasm cyto;
+	cyto.add_species(1,"mRNA");
+	LinearReaction LR1(-1,0,0);
+	cyto.add_reaction(&LR1);
 	//std::cout<<"initizalizing\n";
-	colony.initialize_two();
+	colony.initialize_two(cyto);
 	//std::cout<<"saving\n";
 	colony.save_population();
-	double totaltime = 8;
+	double totaltime = 2; //8 
 	double recordtimestep = 0.1;
 	double nextrecordtime = recordtimestep;
 
 	while(colony.currenttime()<totaltime){
-		//std::cout<<"iteration "<< i << " \n";
-		//std::cout<<"time: "
-		//<<colony.currenttime()<<'\n';
 		colony.evolve();
 		if (colony.currenttime()>nextrecordtime){
 			colony.save_population();
@@ -22,11 +23,21 @@ int main(int argc, char* argv[]){
 		}
 
 	}
-	//std::cout<<"done\n";
 	return 0;
 
 }
-// struct force{
-// 	double parallel; // resulting force parallel to the axis of the bacterium
-// 	double normal; // resulting normal force applied at extreme 1 of the bacterium (torque)
+
+
+
+
+// int main(int argc, char* argv[]){
+// 	HillRepReaction HR1(1,1,1,0,0);
+// 	Cytoplasm cyto;
+// 	cyto.add_species(1,"mRNA");
+// 	cyto.add_reaction(&HR1);
+// 	cyto.print();
+// 	cyto.react(0.1);
+// 	cyto.print();
+// 	return 0;
+
 // }

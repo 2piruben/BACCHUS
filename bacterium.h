@@ -14,9 +14,11 @@
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_randist.h>
 #include <iostream>
+#include <sstream>
 #include <math.h>
 #include <unistd.h>
 #include <string>
+#include "molecular.h"
 
 
 // class chemical{
@@ -36,7 +38,7 @@ protected:
 	vec2d pos[2]; // position of each pole of the bacterium
 	double r; // bacterium width
 	double age;
-	double growth_rate;
+	double growth_rate; // basic growth rate for a healthy single bacterium
 	double l0; // preferred length of bacterium
 	double springk; // l0 is maintained with Hooke's law with stiffness springk
 	double division_length;
@@ -50,7 +52,8 @@ public:
 
 	bacterium(int id_, double r_, vec2d pos1_, vec2d pos2_, double growth_rate_,
 		double division_length_, double mem, double friction_trans_, double springk_);
-
+	bacterium(int id_, double r_, vec2d pos1_, vec2d pos2_, double growth_rate_,
+		double division_length_, double mem, double friction_trans_, double springk_, Cytoplasm cyto_);
 	void get_centre(vec2d &output);
 	void get_orientation(vec2d &output);
 	void get_length(double &length_);
@@ -65,8 +68,9 @@ public:
 	vec2d get_pole1();
 	vec2d get_pole2();
 	void set_type(int type_);
+	void set_growth_rate(double);
 	int get_type();
-
+	Cytoplasm cyto; // containing species and reactions through the class cytoplasm
 
 	int get_id(){return id;};
 	double radius_bac(){return r;};
@@ -80,7 +84,6 @@ public:
 	void get_glob2shift(vec2d &output);
 	void get_rot2shift(vec2d &output);
 	void get_shift2rot(vec2d &output);
-
 	void move(vec2d Dx);
 	void reset_force();
 	int apply_force(double dt); // return 1 rerseved for warning flags
@@ -88,9 +91,13 @@ public:
 	bool division_ready();
 	void get_daughter1_poles(vec2d& p1, vec2d& p2);
 	void get_daughter2_poles(vec2d& p1, vec2d& p2);
+	bacterium get_daughter1(int id = -1);
+	bacterium get_daughter2(int id = -1);
+	std::string get_str_physics();
 
 	friend void update_force_between(bacterium &b1, bacterium &b2);
 
 };
+
 
 #endif

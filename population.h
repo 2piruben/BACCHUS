@@ -42,7 +42,7 @@ class population{
 		int next_id();
 		double timestep();
 		double currenttime();
-		void initialize_two();
+		void initialize_two(Cytoplasm);
 		void evolve();
 	    void print_population();
 	    void save_population();

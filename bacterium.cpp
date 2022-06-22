@@ -19,9 +19,32 @@
 		springk = springk_; 
 		reset_force();
 		type = 0;
+		cyto = Cytoplasm();
 	}
 
-	// functions returning protected atributes (*_bac()) are define directly in the header
+	bacterium::bacterium(int id_, double r_, vec2d pos1_, vec2d pos2_, double growth_rate_,
+		double division_length_, double mem_, double friction_trans_, double springk_, Cytoplasm cyto_){
+		std::cout<<"created bacteria "<<id_<<" at "<<pos1_<<' '<<pos2_<<'\n';
+		id  = id_;
+		pos[0][0]  = pos1_[0];
+		pos[0][1]  = pos1_[1];
+		pos[1][0]  = pos2_[0];
+		pos[1][1]  = pos2_[1];
+		r = r_;
+		mem = mem_; 
+		age = 0;
+		l0 = dist(pos1_,pos2_); // initial target length of bacterium
+		division_length = division_length_;
+		growth_rate = growth_rate_;
+		friction_trans = friction_trans_;
+		springk = springk_; 
+		reset_force();
+		type = 0;
+		cyto = cyto_;
+	}
+
+
+/// Function returning or setting private atributes 
 
 	void bacterium::get_centre(vec2d &output){
 		output = (pos[0]+pos[1])/2;
@@ -90,6 +113,12 @@
 		type = type_;
 	}
 
+	void bacterium::set_growth_rate(double growth_rate_){
+		growth_rate = growth_rate_;
+	}
+
+/// Functions managing reference systems of vectors with respect to bacteria
+
 	// We want functions that transform points to 3 different coordinate systems
 	// glob -> with respect to the dish (centered at 0,0)
 	// shift -> with respect to the center of the bacterium
@@ -128,6 +157,8 @@
 		output = rotate(output,-1.0*get_angle());
 	}
 
+// Mechanical functions for the bacteria
+
 	void bacterium::move(vec2d Dx){
 		pos[0] += Dx;
 		pos[1] += Dx;
@@ -148,6 +179,8 @@
 		vec2d temp_vec;
 		get_orientation(temp_vec);
 		vec2d cappedforce0,cappedforce1;
+		double length_before;
+		length_before = get_length();
 		// std::cout<<"Force on pole1 "<<force[0]<<'\n';
 		// std::cout<<"Force on pole2 "<<force[1]<<'\n';
 		// std::cout<<"orientation before force"<<temp_vec<<'\n';
@@ -159,6 +192,9 @@
 		}
 		pos[0] += cappedforce0 * dt / friction_trans;
 		pos[1] += cappedforce1 * dt / friction_trans;
+
+		cyto.dilute((4.0/3.0*r+length_before)/(4.0/3.0*r+get_length()));
+
 		get_orientation(temp_vec);
 		if (((cappedforce0 * dt / friction_trans).modulus())>0.1 ||
 			((cappedforce1 * dt / friction_trans).modulus())>0.1){
@@ -180,7 +216,7 @@
 
 	void bacterium::grow(double dt){ // grow natural length of the pole-pole spring
 		//l0 += fmax(0,growth_rate*dt*(1-(l0-length())/l0));
-		l0 += growth_rate*dt;
+		l0 += growth_rate*cyto.get_growth_rate_modifier()*dt;
 	}
 
 	bool bacterium::division_ready(){
@@ -198,6 +234,29 @@
 		p1 = pos[1];
 		get_orientation(p2);
 		p2 = pos[1] + p2*(1-r/p2.modulus());
+	}
+
+	bacterium bacterium::get_daughter1(int id){
+		vec2d pole1,pole2;
+		get_daughter1_poles(pole1,pole2);
+		bacterium bb(id,r,pole1,pole2, growth_rate,2.0, mem, friction_trans, springk, cyto);
+		return bb;
+	}
+
+	bacterium bacterium::get_daughter2(int id){
+		vec2d pole1,pole2;
+		get_daughter2_poles(pole1,pole2);
+		bacterium bb(id,r,pole1,pole2, growth_rate,2.0, mem, friction_trans, springk, cyto);
+		return bb;
+	}
+
+	std::string bacterium::get_str_physics(){
+		std::stringstream ssphys;
+		ssphys<<id<<' '<<type<<' '<<get_centre()[0]<<' '<<get_centre()[1]<<' ';
+    	ssphys<<get_angle()<<' '<<get_length()<<' '<<l0<<' ';
+    	ssphys<<force[0][0]<<' '<<force[0][1]<<' ';	
+    	ssphys<<force[1][0]<<' '<<force[1][1];
+    	return ssphys.str();
 	}
 
 void update_force_between(bacterium &b1, bacterium &b2){
