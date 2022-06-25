@@ -62,10 +62,10 @@ std::string Cytoplasm::get_str_concentrations(){
 
 void Cytoplasm::react(double dt){
 	std::cout<<"Entering print\n";
+	std::cout<<"Entering vector with "<<reactions.size()<<" elements\n";
 	for (auto & r: reactions){
 //		r->react(s,dt);// for each reaction r react on the species vector s
 	}
-	std::cout<<"Exiting print\n";
 }
 
 
