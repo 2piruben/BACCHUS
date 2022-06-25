@@ -75,6 +75,7 @@ class Cytoplasm{//Class controlling the molecular content of a bacterium.
 		double get_species(int idx); // return the amount of a certain species
 		void react(double dt); // trigger all the reactions a window time dt
 		void print(); // print the cytoplasmic information
+		void print_complexity();
 		void dilute(double factor); // dilute the content a certain factor, used in bacterial growth
 		double get_growth_rate_modifier(); // 
 		std::string get_str_concentrations(); //  get a string with the concentrataions of the different species

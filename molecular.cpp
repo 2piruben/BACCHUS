@@ -55,6 +55,10 @@ void Cytoplasm::print(){
 	}
 }
 
+void Cytoplasm::print_complexity(){
+	std::cout<<"Cytoplasm with "<<s.size()<<" species and "<<reactions.size()<<" reaction\n";
+}
+
 void Cytoplasm::dilute(double factor){
 	for(auto & ss: s){
 		ss *= factor; 

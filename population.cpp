@@ -96,6 +96,7 @@
     			cells_dead.push_back(*cell_ptr);
     			// finding new poles of daughter 1 and adding it to cells
     			cells.push_back((*cell_ptr)->get_daughter1(next_id()));
+    			cells.back().cyto.print_complexity();
     			cells.back().set_growth_rate(mean_growth_rate*(1+gsl_ran_gaussian(rng,0.2)));
     			cells_alive.push_back(&cells.back());
     			// std::cout<<"Created cell at"<<cells.back().centre()[0]<<' '<<cells.back().centre()[1]<<" \n";
