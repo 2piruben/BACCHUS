@@ -103,7 +103,7 @@
     			cells_dead.push_back((*cell_ptr));
     			// finding new poles of daughter 1 and adding it to cells
     			cells.push_back((*cell_ptr)->get_daughter1(next_id()));
-    			cells.back().cyto.print_complexity();
+    			//cells.back().cyto.print_complexity();
     			cells.back().set_growth_rate(mean_growth_rate*(1+gsl_ran_gaussian(rng,0.2)));
     			cells_alive.push_back(&cells.back());
     			// std::cout<<"Created cell at"<<cells.back().centre()[0]<<' '<<cells.back().centre()[1]<<" \n";
@@ -111,15 +111,15 @@
     			// finding new poles of daughter 2 and adding it to cell
 				cells.push_back((*cell_ptr)->get_daughter2(next_id()));    			// std::cout<<"Created cell at"<<cells.back().centre()[0]<<' '<<cells.back().centre()[1]<<" \n";
     			cells_alive.push_back(&cells.back());
-    			cells.back().cyto.print_complexity();
+    			//cells.back().cyto.print_complexity();
     			cells.back().set_growth_rate(mean_growth_rate*(1+gsl_ran_gaussian(rng,0.2)));
     			// removing pointer to old cell
     			cells_to_die.push_back((*cell_ptr));
     			cell_ptr = cells_alive.erase(cell_ptr);
-    			std::cout<<"Printing alive cells (1)\n";
-    			for(auto & c: cells_alive){
-    				c->cyto.print_complexity();
-    			}
+    			// std::cout<<"Printing alive cells (1)\n";
+    			// for(auto & c: cells_alive){
+    			// 	c->cyto.print_complexity();
+    			// }
     		}
     		else{
     			cell_ptr++;

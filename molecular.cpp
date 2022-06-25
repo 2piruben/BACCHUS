@@ -7,7 +7,7 @@ Cytoplasm::Cytoplasm(){
 }
 
 Cytoplasm::Cytoplasm(const Cytoplasm &old_cytoplasm){ // custom copy of cytoplasm
-	std::cout<<"Custom constuctor Cytoplasm\n";
+	// std::cout<<"Custom constuctor Cytoplasm\n";
 	dim_s = old_cytoplasm.dim_s;
 	dim_r = old_cytoplasm.dim_r;
 	growth_rate_idx = old_cytoplasm.growth_rate_idx; // negative means that there is not growth rate modifier
@@ -24,7 +24,7 @@ Cytoplasm::Cytoplasm(const Cytoplasm &old_cytoplasm){ // custom copy of cytoplas
 	for(auto & rname: old_cytoplasm.r_names){
 		r_names.push_back(rname);
 	}
-	std::cout<<"rsize"<<reactions.size()<<'\n';
+	//std::cout<<"rsize"<<reactions.size()<<'\n';
 }
 
 void Cytoplasm::add_reaction(Reaction* r){
@@ -86,10 +86,10 @@ std::string Cytoplasm::get_str_concentrations(){
 }
 
 void Cytoplasm::react(double dt){
-	std::cout<<"Entering print\n";
-	std::cout<<"Entering vector with "<<reactions.size()<<" elements\n";
+	// std::cout<<"Entering print\n";
+	// std::cout<<"Entering vector with "<<reactions.size()<<" elements\n";
 	for (auto & r: reactions){
-//		r->react(s,dt);// for each reaction r react on the species vector s
+		r->react(s,dt);// for each reaction r react on the species vector s
 	}
 }
 
@@ -119,7 +119,7 @@ LinearReaction::LinearReaction(double k_, int idx_in_, int idx_out_){
 }
 LinearReaction::~LinearReaction(){};
 void LinearReaction::react(vec_species& s, double dt){
-	std::cout<<"k"<< k<<'\n';
+	// std::cout<<"k"<< k<<'\n';
 	s[idx_out] += dt*k*s[idx_in]; 	
 }
 

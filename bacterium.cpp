@@ -3,7 +3,7 @@
 
 	bacterium::bacterium(int id_, double r_, vec2d pos1_, vec2d pos2_, double growth_rate_,
 		double division_length_, double mem_, double friction_trans_, double springk_){
-		std::cout<<"created bacteria "<<id_<<" at "<<pos1_<<' '<<pos2_<<'\n';
+		//std::cout<<"created bacteria "<<id_<<" at "<<pos1_<<' '<<pos2_<<'\n';
 		id  = id_;
 		pos[0][0]  = pos1_[0];
 		pos[0][1]  = pos1_[1];
@@ -24,7 +24,7 @@
 
 	bacterium::bacterium(int id_, double r_, vec2d pos1_, vec2d pos2_, double growth_rate_,
 		double division_length_, double mem_, double friction_trans_, double springk_, Cytoplasm cyto_){
-		std::cout<<"created bacteria "<<id_<<" at "<<pos1_<<' '<<pos2_<<'\n';
+		//std::cout<<"created bacteria "<<id_<<" at "<<pos1_<<' '<<pos2_<<'\n';
 		id  = id_;
 		pos[0][0]  = pos1_[0];
 		pos[0][1]  = pos1_[1];
