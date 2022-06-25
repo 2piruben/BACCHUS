@@ -82,24 +82,25 @@
 
 
 	void population::evolve(){ // evolve the popualtion a time step dt
+
 		/// growth and division
 		// std::cout<<"################# time: "<<time<<'\n';
 
-		std::cout<<"Printing alive cells (2)\n";
-		for(auto & c: cells_alive){
-			c->cyto.print_complexity();
-		}
+		// std::cout<<"Printing alive cells (2)\n";
+		// for(auto & c: cells_alive){
+		// 	c->cyto.print_complexity();
+		// }
 
 
-		for(std::list<bacterium*>::iterator cell_ptr = cells_alive.begin(); cell_ptr != cells_alive.end(); ++cell_ptr) {
+		for(auto cell_ptr = cells_alive.begin(); cell_ptr!=cells_alive.end();) {
 			(*cell_ptr)->reset_force();
 			(*cell_ptr)->cyto.react(dt);
 			(*cell_ptr)->grow(dt);
 			if ((*cell_ptr)->division_ready()) 
     		{// division
-    			// std::cout<<"Dividing cell at "<<(*cell_ptr)->centre()[0]<<' '<<(*cell_ptr)->centre()[1]<<" \n";
+    			// std::cout<<"Dividing cell at "<<(*(*cell_ptr))->centre()[0]<<' '<<(*(*cell_ptr))->centre()[1]<<" \n";
     			// adding cell to dead list
-    			cells_dead.push_back(*cell_ptr);
+    			cells_dead.push_back((*cell_ptr));
     			// finding new poles of daughter 1 and adding it to cells
     			cells.push_back((*cell_ptr)->get_daughter1(next_id()));
     			cells.back().cyto.print_complexity();
@@ -113,11 +114,15 @@
     			cells.back().cyto.print_complexity();
     			cells.back().set_growth_rate(mean_growth_rate*(1+gsl_ran_gaussian(rng,0.2)));
     			// removing pointer to old cell
-    			cells_alive.erase(cell_ptr);
+    			cells_to_die.push_back((*cell_ptr));
+    			cell_ptr = cells_alive.erase(cell_ptr);
     			std::cout<<"Printing alive cells (1)\n";
     			for(auto & c: cells_alive){
     				c->cyto.print_complexity();
     			}
+    		}
+    		else{
+    			cell_ptr++;
     		}
     	}
     	//std::cout<<"calculating forces\n";

@@ -31,6 +31,7 @@ class population{
 		std::list<bacterium> cells;
 		std::list<bacterium*> cells_alive;
 		std::list<bacterium*> cells_dead;
+		std::list<bacterium*> cells_to_die;
 		double dt;
 		int id;
 		double time;
@@ -47,6 +48,7 @@ class population{
 		void evolve();
 	    void print_population();
 	    void save_population();
+
 
 };
 
