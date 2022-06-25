@@ -95,6 +95,7 @@ LinearReaction::LinearReaction(double k_, int idx_in_, int idx_out_){
 }
 LinearReaction::~LinearReaction(){};
 void LinearReaction::react(vec_species& s, double dt){
+	std::cout<<"k"<< k<<'\n';
 	s[idx_out] += dt*k*s[idx_in]; 	
 }
 
