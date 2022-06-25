@@ -85,6 +85,12 @@
 		/// growth and division
 		// std::cout<<"################# time: "<<time<<'\n';
 
+		std::cout<<"Printing alive cells (2)\n";
+		for(auto & c: cells_alive){
+			c->cyto.print_complexity();
+		}
+
+
 		for(std::list<bacterium*>::iterator cell_ptr = cells_alive.begin(); cell_ptr != cells_alive.end(); ++cell_ptr) {
 			(*cell_ptr)->reset_force();
 			(*cell_ptr)->cyto.react(dt);
@@ -108,7 +114,10 @@
     			cells.back().set_growth_rate(mean_growth_rate*(1+gsl_ran_gaussian(rng,0.2)));
     			// removing pointer to old cell
     			cells_alive.erase(cell_ptr);
-    			cells_alive.back()->cyto.print_complexity();
+    			std::cout<<"Printing alive cells (1)\n";
+    			for(auto & c: cells_alive){
+    				c->cyto.print_complexity();
+    			}
     		}
     	}
     	//std::cout<<"calculating forces\n";
