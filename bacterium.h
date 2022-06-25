@@ -46,7 +46,6 @@ protected:
 	double friction_trans; // friction of bacterium
 	double mem; // membrane stiffness (parameter controlling interaction forces)
 	int type; // dummy label for cell type
-//  #vector<chemical>; // vector with the chemicals that 
 
 public:
 

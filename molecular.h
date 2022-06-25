@@ -6,8 +6,30 @@
 #include <math.h>
 #include <iostream>
 #include <sstream>
+#include <gsl/gsl_matrix.h>
+
 
 typedef std::vector<double> vec_species; // vector of molecular species
+typedef std::vector<double> vec_species; // vector of molecular species
+
+class Species{// class to encode molecular species
+
+		Species();
+		Species(std::string name, double conc);
+		double get_conc();
+		void set_conc(double conc);
+		double make_diffusable(double k);
+
+	private:
+		std::string name; 
+		double conc; // concentration
+		bool diff; // true if species is diffusable
+		double k_diff; // rate of diffusion
+		gsl_matrix* diff_matrix; // matrix of the morphogen outside the cell, 
+		// pointer to diff_matrix will be created when the morphogen matrix is created
+		// with the Dish class
+};
+
 
 class Reaction{ // Abstract class to control different possible reactions, it will be the parent of particular reaction types with different input parameters
 
@@ -67,8 +89,9 @@ class Cytoplasm{//Class controlling the molecular content of a bacterium.
 
 		Cytoplasm();
 		void add_reaction(Reaction* r); // add reaction acting on species idx
-		void add_species(double conc, std::string name); // set the concentration of a certain species
-		void add_growth_rate_modifier(double conc, std::string name); // set the concentration of a certain species
+		void add_diffusible_reaction(int diff_in,int diff_out, double rate); // connect a species of the cytoplasm with a diffusible one
+		void add_species(std::string name,double conc); // set the concentration of a certain species
+		void add_growth_rate_modifier(std::string name,double conc); // set the concentration of a certain species
 		void set_species(int idx, double conc); // set the concentration of a certain species
 		double get_species(int idx); // return the amount of a certain species
 		void react(double dt); // trigger all the reactions a window time dt
@@ -80,6 +103,7 @@ class Cytoplasm{//Class controlling the molecular content of a bacterium.
 	private:
 
 		vec_species s; // molecular species to track 
+		vec_species s_diff; // molecular species to track that are diffusable
 		vec_string s_names; // names of molecular species to track 
 		vec_p_reaction reactions; // reactions that modifiy species 
 		vec_vec_string r_names; // names of the reactions

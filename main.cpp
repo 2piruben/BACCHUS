@@ -1,8 +1,9 @@
+#include "dish.h"
 #include "population.h"
 
 int main(int argc, char* argv[]){
  	//std::cout<<"starting\n";
-	population colony(10,"pars.in");
+	Population colony(10,"pars.in");
 	Cytoplasm cyto;
 	cyto.add_species(1,"mRNA");
 	LinearReaction LR1(-1,0,0);
@@ -11,12 +12,14 @@ int main(int argc, char* argv[]){
 	colony.initialize_two(cyto);
 	//std::cout<<"saving\n";
 	colony.save_population();
+	Dish dish(colony,100);
+
 	double totaltime = 2; //8 
 	double recordtimestep = 0.1;
 	double nextrecordtime = recordtimestep;
 
 	while(colony.currenttime()<totaltime){
-		colony.evolve();
+		dish.evolve();
 		if (colony.currenttime()>nextrecordtime){
 			colony.save_population();
 			nextrecordtime += recordtimestep;

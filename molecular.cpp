@@ -16,13 +16,13 @@ void Cytoplasm::set_species(int idx, double conc){
 	s[idx] = conc;
 }
 
-void Cytoplasm::add_species(double conc, std::string name){
+void Cytoplasm::add_species(std::string name,double conc){
 	s.push_back(conc);
 	s_names.push_back(name);
 	dim_s++;
 }
 
-void Cytoplasm::add_growth_rate_modifier(double conc, std::string name){
+void Cytoplasm::add_growth_rate_modifier(std::string name, double conc){
 	s.push_back(conc);
 	s_names.push_back(name);
 	growth_rate_idx = dim_s;
@@ -70,6 +70,28 @@ void Cytoplasm::react(double dt){
 }
 
 
+Species::Species(){
+	diff = false;
+}
+
+Species::Species(std::string name_, double conc_){
+	diff = false;
+	name = name_;
+	conc = conc_;
+}
+
+double Species::get_conc(){
+	return conc;
+}
+
+void Species::set_conc(double conc_){
+	conc = conc_;
+}
+
+double Species::make_diffusable(double k){
+	diff = true;
+	k_diff = k;
+}
 
 // Reaction functions children of the abstract class Reaction
 

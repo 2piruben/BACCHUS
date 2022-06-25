@@ -11,10 +11,13 @@ RM = rm -f
 
 
 main: main.o
-	$(GPP) $(CFLAGS) $(LFLAGS) -o main main.o bacterium.o algebra2d.o population.o molecular.o
+	$(GPP) $(CFLAGS) $(LFLAGS) -o main main.o bacterium.o algebra2d.o population.o molecular.o dish.o
 
-main.o: main.cpp bacterium.o population.o algebra2d.o molecular.o
+main.o: main.cpp bacterium.o population.o algebra2d.o molecular.o dish.o
 	$(GPP) $(CFLAGS) -c main.cpp
+
+dish.o: dish.cpp dish.h population.o
+	$(GPP) $(CFLAGS) -c dish.cpp	
 
 population.o: population.cpp population.h bacterium.o algebra2d.o
 	$(GPP) $(CFLAGS) -c population.cpp
@@ -27,7 +30,6 @@ molecular.o: molecular.cpp molecular.h
 
 algebra2d.o: algebra2d.cpp algebra2d.h
 	$(GPP) $(CFLAGS) -c algebra2d.cpp
-
 
 all:
 	$(MAKE) -C $(LANGILFOLDER)

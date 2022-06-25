@@ -15,7 +15,7 @@
 #include <vector>
 
 
-class population{
+class Population{
 
 	protected:
 
@@ -38,7 +38,8 @@ class population{
 
 	public:
 
-		population(int seed, std::string inputfile);
+		Population();
+		Population(int seed, std::string inputfile);
 		int next_id();
 		double timestep();
 		double currenttime();

@@ -1,6 +1,14 @@
 #include "population.h"
 
-	population::population(int seed, std::string inputfile){
+	Population::Population(){
+		id = 0 ; 
+		time = 0;
+		rng = gsl_rng_alloc (gsl_rng_mt19937);
+		gsl_rng_set (rng,::time(NULL)*getpid());
+		std::cout<<"RNG Seed used: "<<::time(NULL)*getpid()<<'\n';
+	}
+
+	Population::Population(int seed, std::string inputfile){
 		id = 0 ; 
 		time = 0;
 		rng = gsl_rng_alloc (gsl_rng_mt19937);
@@ -37,21 +45,21 @@
 
 
 
-	int population::next_id(){
+	int Population::next_id(){
 		id += 1;
 		return id;
 	}
 
-	double population::timestep(){
+	double Population::timestep(){
 		return dt;
 	}
 
-	double population::currenttime(){
+	double Population::currenttime(){
 		return time;
 	}
 
-	void population::initialize_two(Cytoplasm cyto){ // start population with two parallel bacteria
-		std::cout<<"Initizalizing population...\n";
+	void Population::initialize_two(Cytoplasm cyto){ // start Population with two parallel bacteria
+		std::cout<<"Initizalizing Population...\n";
 		vec2d posinit1,posinit2;
 		double angleinit = 3.14159/4;
 		posinit1[0] = 0;
@@ -81,7 +89,7 @@
 
 
 
-	void population::evolve(){ // evolve the popualtion a time step dt
+	void Population::evolve(){ // evolve the popualtion a time step dt
 		/// growth and division
 		// std::cout<<"################# time: "<<time<<'\n';
 
@@ -120,7 +128,7 @@
 		for(std::list<bacterium*>::iterator cell_ptr = cells_alive.begin(); cell_ptr != cells_alive.end(); ++cell_ptr) {
 			// std::cout<<"Applying force on bacterium "<<(*cell_ptr)->id_bac()<<'\n';
 			if((*cell_ptr)->apply_force(dt)==1){
-				// std::cout<<"Large force in population:\n";
+				// std::cout<<"Large force in Population:\n";
 				// for(std::list<bacterium*>::iterator cell_ptr = cells_alive.begin(); cell_ptr != cells_alive.end(); ++cell_ptr) {
     // 				std::cout<<(*cell_ptr)->id_bac()<<' '<<(*cell_ptr)->centre()[0]<<' '<<(*cell_ptr)->centre()[1]<<' ';
     // 				std::cout<<(*cell_ptr)->angle()<<' '<<(*cell_ptr)->length()<<' '<<(*cell_ptr)->length0()<<' ';
@@ -132,13 +140,13 @@
 		time += dt;
     }
 
-    void population::print_population(){
+    void Population::print_population(){
     	for(std::list<bacterium*>::iterator cell_ptr = cells_alive.begin(); cell_ptr != cells_alive.end(); ++cell_ptr) {
     		std::cout<<(*cell_ptr)->get_id()<<' '<<(*cell_ptr)->get_centre()[0]<<' '<<(*cell_ptr)->get_centre()[1]<<'\n';
     	}
     }
 
-    void population::save_population(){
+    void Population::save_population(){
     	ofilename.str("");
     	ofilename<<"output/population"<<std::setprecision(5)<<time<<".out";
     	trajfile.open(ofilename.str()); // output trajectory
