@@ -104,9 +104,11 @@
     			// finding new poles of daughter 2 and adding it to cell
 				cells.push_back((*cell_ptr)->get_daughter2(next_id()));    			// std::cout<<"Created cell at"<<cells.back().centre()[0]<<' '<<cells.back().centre()[1]<<" \n";
     			cells_alive.push_back(&cells.back());
+    			cells.back().cyto.print_complexity();
     			cells.back().set_growth_rate(mean_growth_rate*(1+gsl_ran_gaussian(rng,0.2)));
     			// removing pointer to old cell
     			cells_alive.erase(cell_ptr);
+    			cells.back().cyto.print_complexity();
     		}
     	}
     	//std::cout<<"calculating forces\n";
