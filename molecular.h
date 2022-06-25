@@ -53,6 +53,7 @@ class LinearReaction : public Reaction{
 
 
 typedef std::vector<Reaction*> vec_p_reaction; // vec_p_reaction contains all the reactions that occur on a cell
+// they need to be pointers because Reaction is an abstract class
 typedef std::vector<std::string> vec_string;
 typedef std::vector<vec_string> vec_vec_string;
 

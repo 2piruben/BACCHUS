@@ -11,7 +11,6 @@ void Cytoplasm::add_reaction(Reaction* r){
 	dim_r++;
 }
 
-
 void Cytoplasm::set_species(int idx, double conc){
 	s[idx] = conc;
 }
@@ -64,7 +63,7 @@ std::string Cytoplasm::get_str_concentrations(){
 void Cytoplasm::react(double dt){
 	std::cout<<"Entering print\n";
 	for (auto & r: reactions){
-		r->react(s,dt);// for each reaction r react on the species vector s
+//		r->react(s,dt);// for each reaction r react on the species vector s
 	}
 	std::cout<<"Exiting print\n";
 }
