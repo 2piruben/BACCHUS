@@ -6,6 +6,26 @@ Cytoplasm::Cytoplasm(){
 	growth_rate_idx = -1; // negative means that there is not growth rate modifier
 }
 
+Cytoplasm::Cytoplasm(const Cytoplasm &old_cytoplasm){ // custom copy of cytoplasm
+	std::cout<<"Custom constuctor Cytoplasm\n";
+	dim_s = old_cytoplasm.dim_s;
+	dim_r = old_cytoplasm.dim_r;
+	growth_rate_idx = old_cytoplasm.growth_rate_idx; // negative means that there is not growth rate modifier
+
+	for(auto & ss: old_cytoplasm.s){
+		s.push_back(ss);
+	}
+	for(auto & name: old_cytoplasm.s_names){
+		s_names.push_back(name);
+	}
+	for(auto & reaction: old_cytoplasm.reactions){
+		reactions.push_back(reaction);
+	}
+	for(auto & rname: old_cytoplasm.r_names){
+		r_names.push_back(rname);
+	}
+}
+
 void Cytoplasm::add_reaction(Reaction* r){
 	reactions.push_back(r);	
 	dim_r++;

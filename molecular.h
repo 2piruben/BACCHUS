@@ -67,6 +67,7 @@ class Cytoplasm{//Class controlling the molecular content of a bacterium.
 	public:
 
 		Cytoplasm();
+		Cytoplasm(const Cytoplasm &c);
 		void add_reaction(Reaction* r); // add reaction acting on species idx
 		void add_species(double conc, std::string name); // set the concentration of a certain species
 		void add_growth_rate_modifier(double conc, std::string name); // set the concentration of a certain species
