@@ -108,7 +108,7 @@
     			cells.back().set_growth_rate(mean_growth_rate*(1+gsl_ran_gaussian(rng,0.2)));
     			// removing pointer to old cell
     			cells_alive.erase(cell_ptr);
-    			cells.back().cyto.print_complexity();
+    			cells_alive.back()->cyto.print_complexity();
     		}
     	}
     	//std::cout<<"calculating forces\n";

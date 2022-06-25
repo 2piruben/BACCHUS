@@ -51,7 +51,7 @@ class LinearReaction : public Reaction{
 		int idx_in;
 };
 
-
+// typedef std::shared_ptr<Reaction> p_reaction; // shared pointers are required so 
 typedef std::vector<Reaction*> vec_p_reaction; // vec_p_reaction contains all the reactions that occur on a cell
 // they need to be pointers because Reaction is an abstract class
 typedef std::vector<std::string> vec_string;
