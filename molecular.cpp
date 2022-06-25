@@ -18,12 +18,13 @@ Cytoplasm::Cytoplasm(const Cytoplasm &old_cytoplasm){ // custom copy of cytoplas
 	for(auto & name: old_cytoplasm.s_names){
 		s_names.push_back(name);
 	}
-	for(auto & reaction: old_cytoplasm.reactions){
+	for(auto reaction: old_cytoplasm.reactions){
 		reactions.push_back(reaction);
 	}
 	for(auto & rname: old_cytoplasm.r_names){
 		r_names.push_back(rname);
 	}
+	std::cout<<"rsize"<<reactions.size()<<'\n';
 }
 
 void Cytoplasm::add_reaction(Reaction* r){
