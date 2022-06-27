@@ -93,29 +93,33 @@
 		/// growth and division
 		// std::cout<<"################# time: "<<time<<'\n';
 
-		for(std::list<bacterium*>::iterator cell_ptr = cells_alive.begin(); cell_ptr != cells_alive.end(); ++cell_ptr) {
+		for(auto cell_ptr = cells_alive.begin(); cell_ptr!=cells_alive.end();) {
 			(*cell_ptr)->reset_force();
 			(*cell_ptr)->cyto.react(dt);
 			(*cell_ptr)->grow(dt);
 			if ((*cell_ptr)->division_ready()) 
     		{// division
-    			// std::cout<<"Dividing cell at "<<(*cell_ptr)->centre()[0]<<' '<<(*cell_ptr)->centre()[1]<<" \n";
     			// adding cell to dead list
-    			cells_dead.push_back(*cell_ptr);
-    			// finding new poles of daughter 1 and adding it to cells
-    			cells.push_back((*cell_ptr)->get_daughter1(next_id()));
-    			cells.back().set_growth_rate(mean_growth_rate*(1+gsl_ran_gaussian(rng,0.2)));
-    			cells_alive.push_back(&cells.back());
-    			// std::cout<<"Created cell at"<<cells.back().centre()[0]<<' '<<cells.back().centre()[1]<<" \n";
+    			cells_dead.push_back((*cell_ptr));
 
-    			// finding new poles of daughter 2 and adding it to cell
-				cells.push_back((*cell_ptr)->get_daughter2(next_id()));    			// std::cout<<"Created cell at"<<cells.back().centre()[0]<<' '<<cells.back().centre()[1]<<" \n";
+    			// Adding daughter 1
+    			cells.push_back((*cell_ptr)->get_daughter1(next_id()));
+    			cells.back().set_growth_rate(mean_growth_rate*(1+gsl_ran_gaussian(rng,0.2))); // random growth_rate
     			cells_alive.push_back(&cells.back());
-    			cells.back().set_growth_rate(mean_growth_rate*(1+gsl_ran_gaussian(rng,0.2)));
+
+    			// Adding daughter 2
+				cells.push_back((*cell_ptr)->get_daughter2(next_id()));   
+    			cells_alive.push_back(&cells.back());
+    			cells.back().set_growth_rate(mean_growth_rate*(1+gsl_ran_gaussian(rng,0.2))); // random growth_rate
+
     			// removing pointer to old cell
-    			cells_alive.erase(cell_ptr);
+    			cell_ptr = cells_alive.erase(cell_ptr); // returned cell_ptr points to next alive cell after elimination
+    		}
+    		else{ // if there is no division, check next cell
+    			cell_ptr++;
     		}
     	}
+
     	//std::cout<<"calculating forces\n";
 		/// calculate forces
 		for(std::list<bacterium*>::iterator cell_ptr1 = cells_alive.begin(); cell_ptr1 != cells_alive.end(); ++cell_ptr1) {
@@ -147,6 +151,7 @@
     }
 
     void Population::save_population(){
+    	std::filesystem::create_directory("output"); 
     	ofilename.str("");
     	ofilename<<"output/population"<<std::setprecision(5)<<time<<".out";
     	trajfile.open(ofilename.str()); // output trajectory

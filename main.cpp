@@ -5,7 +5,7 @@ int main(int argc, char* argv[]){
  	//std::cout<<"starting\n";
 	Population colony(10,"pars.in");
 	Cytoplasm cyto;
-	cyto.add_species(1,"mRNA");
+	cyto.add_species("mRNA",1.0);
 	LinearReaction LR1(-1,0,0);
 	cyto.add_reaction(&LR1);
 	//std::cout<<"initizalizing\n";

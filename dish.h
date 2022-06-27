@@ -13,11 +13,21 @@
 
 class Diffusable{
 
+	private:
+
+	int N;
+
 	public:
 
 	Diffusable();
-	Diffusable(std::string name_, double diff_coeff_, double decay_coeff_, double init_conc);
+	Diffusable(std::string name_, double diff_coeff_, double decay_coeff_, double init_conc, int N);
 
+	gsl_matrix* conc; // matrix with the concentrations
+	gsl_matrix* auxconc; // auxiliary matrix to perform operations
+	gsl_matrix_view row0,row1,rowN,rowNm; // views to the conc matrix
+	gsl_matrix_view col0,col1,colN,colNm; // views to the conc matrix
+	gsl_matrix_view centre,left,right,top,bottom; // views to (N-2)x(N-2) submatrices used in the diffusion
+	gsl_matrix_view auxcentre,auxleft,auxright,auxtop,auxbottom; // views to (N-2)x(N-2) submatrices used in the diffusion
 	double diff_coeff; // diffusion coefficient
 	double decay_coeff; // decay coefficient
 	double init_conc; // initial concentration
@@ -46,9 +56,7 @@ class Dish{ // Class containing the whole dish, will contain a colony of cells p
 		int N; // discretization of the dish
 		int dim; // numer of diffusable species
 		int L; // length of the side of the square dish
-		std::vector<gsl_matrix*> diff_conc; // vector containing the different matrices of diffusible substances
-		gsl_matrix* diff_conc_aux; // auxiliar vector containing the different matrices of diffusible substances
-		std::vector<Diffusable> diff_pars; // vector containing the names of the different diffusers
+		std::vector<Diffusable> diffusables; // vector containing the different matrices of diffusible substances
 		int boundary_condition; // 
 		double dt;
 		
