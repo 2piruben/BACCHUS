@@ -73,8 +73,9 @@ class LinearReaction : public Reaction{
 		int idx_in;
 };
 
-
+// typedef std::shared_ptr<Reaction> p_reaction; // shared pointers are required so 
 typedef std::vector<Reaction*> vec_p_reaction; // vec_p_reaction contains all the reactions that occur on a cell
+// they need to be pointers because Reaction is an abstract class
 typedef std::vector<std::string> vec_string;
 typedef std::vector<vec_string> vec_vec_string;
 
@@ -88,6 +89,7 @@ class Cytoplasm{//Class controlling the molecular content of a bacterium.
 	public:
 
 		Cytoplasm();
+		Cytoplasm(const Cytoplasm &c);
 		void add_reaction(Reaction* r); // add reaction acting on species idx
 		void add_diffusible_reaction(int diff_in,int diff_out, double rate); // connect a species of the cytoplasm with a diffusible one
 		void add_species(std::string name,double conc); // set the concentration of a certain species
@@ -96,6 +98,7 @@ class Cytoplasm{//Class controlling the molecular content of a bacterium.
 		double get_species(int idx); // return the amount of a certain species
 		void react(double dt); // trigger all the reactions a window time dt
 		void print(); // print the cytoplasmic information
+		void print_complexity();
 		void dilute(double factor); // dilute the content a certain factor, used in bacterial growth
 		double get_growth_rate_modifier(); // 
 		std::string get_str_concentrations(); //  get a string with the concentrataions of the different species

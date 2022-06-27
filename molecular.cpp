@@ -6,11 +6,31 @@ Cytoplasm::Cytoplasm(){
 	growth_rate_idx = -1; // negative means that there is not growth rate modifier
 }
 
+Cytoplasm::Cytoplasm(const Cytoplasm &old_cytoplasm){ // custom copy of cytoplasm
+	// std::cout<<"Custom constuctor Cytoplasm\n";
+	dim_s = old_cytoplasm.dim_s;
+	dim_r = old_cytoplasm.dim_r;
+	growth_rate_idx = old_cytoplasm.growth_rate_idx; // negative means that there is not growth rate modifier
+
+	for(auto & ss: old_cytoplasm.s){
+		s.push_back(ss);
+	}
+	for(auto & name: old_cytoplasm.s_names){
+		s_names.push_back(name);
+	}
+	for(auto reaction: old_cytoplasm.reactions){
+		reactions.push_back(reaction);
+	}
+	for(auto & rname: old_cytoplasm.r_names){
+		r_names.push_back(rname);
+	}
+	//std::cout<<"rsize"<<reactions.size()<<'\n';
+}
+
 void Cytoplasm::add_reaction(Reaction* r){
 	reactions.push_back(r);	
 	dim_r++;
 }
-
 
 void Cytoplasm::set_species(int idx, double conc){
 	s[idx] = conc;
@@ -33,6 +53,10 @@ void Cytoplasm::print(){
 	for(int i=0;i<dim_s;i++){
 		std::cout<<s_names[i]<<' '<<s[i]<<'\n';
 	}
+}
+
+void Cytoplasm::print_complexity(){
+	std::cout<<"Cytoplasm with "<<s.size()<<" species and "<<reactions.size()<<" reaction\n";
 }
 
 void Cytoplasm::dilute(double factor){
@@ -62,11 +86,11 @@ std::string Cytoplasm::get_str_concentrations(){
 }
 
 void Cytoplasm::react(double dt){
-	std::cout<<"Entering print\n";
+	// std::cout<<"Entering print\n";
+	// std::cout<<"Entering vector with "<<reactions.size()<<" elements\n";
 	for (auto & r: reactions){
 		r->react(s,dt);// for each reaction r react on the species vector s
 	}
-	std::cout<<"Exiting print\n";
 }
 
 
@@ -117,6 +141,7 @@ LinearReaction::LinearReaction(double k_, int idx_in_, int idx_out_){
 }
 LinearReaction::~LinearReaction(){};
 void LinearReaction::react(vec_species& s, double dt){
+	// std::cout<<"k"<< k<<'\n';
 	s[idx_out] += dt*k*s[idx_in]; 	
 }
 
