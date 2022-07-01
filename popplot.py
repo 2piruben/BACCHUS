@@ -70,7 +70,7 @@ def plotbac(posx, posy, angle, length, radius, color = 'orange', force = None):
 	 ]
 
 	path = Path(verts, codes)
-	patch = patches.PathPatch(path, facecolor='orange', edgecolor = 'k', lw=2, zorder = 0)
+	patch = patches.PathPatch(path, facecolor=color, edgecolor = 'k', lw=2, zorder = 0)
 	ax.add_patch(patch)
 
 	# plt.plot([posx],[posy],'bo')
@@ -93,26 +93,28 @@ timelist = sorted(timelist,key = lambda x: float(x))
 # print('Sorted list',timelist)
 	
 print("Creating Frames...")
+L = 10 # box of size (-10,-10)->(10,10) this should be read from file in the future
+color = ['orange','hotpink']
 for it,timepoint in enumerate(tqdm(timelist)):
 	file_bac = np.loadtxt(foldername_colony+'colony_'+timepoint+'.out')
 	for bac in file_bac:
-		plotbac(bac[2],bac[3],bac[4],bac[5],0.2)
+		plotbac(bac[2],bac[3],bac[4],bac[5],0.2,color=color[int(bac[1])])
 	ax = plt.gca()
-
 	vmin = 0
 	vmax = 5
 	maxalpha = 0.8 # most opaque value of the morphogen
+	# print(foldername_diffusible+'diffusible_0_'+timepoint+'.out')
 	file_diff = np.loadtxt(foldername_diffusible+'diffusible_0_'+timepoint+'.out')
 	alphas_diff = file_diff
 	alphas_diff[alphas_diff>vmax] = vmax
 	alphas_diff[alphas_diff<vmin] = vmin
 	alphas_diff = (alphas_diff-vmin)/(vmax-vmin)*maxalpha
 	plt.imshow(file_diff,cmap = 'Blues',vmin = 0, vmax = 5,alpha = alphas_diff,
-			   zorder = 10, extent = [-5,5,-5,5])
+			   zorder = 10, extent = [-L,L,-L,L])
 
 	ax.set_aspect('equal')
-	plt.xlim(-5,5)
-	plt.ylim(-5,5)
+	plt.xlim(-L,L)
+	plt.ylim(-L,L)
 
 	plt.title('t = {}'.format(timepoint))
 

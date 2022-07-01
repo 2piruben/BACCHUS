@@ -45,7 +45,6 @@ class Reaction{ // Abstract class to control different possible reactions, it wi
 		virtual ~Reaction() = default; // abstract class destructor 
 		virtual void react(vec_species& v, double dt)=0; // pure virtual, will be override by particular reactions
 
-
 	private:
 		int idx_out; // A reaction will operate on a vec_species, modifyinf element idx_out
 

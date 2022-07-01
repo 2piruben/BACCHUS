@@ -13,6 +13,7 @@ Diffusible::Diffusible(std::string name_, double diff_coeff_, double decay_coeff
 	decay_coeff = decay_coeff_;
 	conc = gsl_matrix_alloc(N,N);
 	auxconc = gsl_matrix_alloc(N,N);
+	gsl_matrix_set_all(conc,init_conc);
 	std::cout<<"Initializating diffusible\n";
 	// Creating views that will be used to calculate diffusion later on
 	row0 = gsl_matrix_submatrix(conc,0,0,1,N);

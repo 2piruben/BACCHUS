@@ -104,10 +104,10 @@ std::string Cytoplasm::get_str_concentrations(){
 
 void Cytoplasm::react(double dt){
 	// std::cout<<"Entering print\n";
-	std::cout<<"Reacting in cell with content "<<get_str_concentrations()<<'\n';
+	// std::cout<<"Reacting in cell with content "<<get_str_concentrations()<<'\n';
 	for (auto & r: reactions){
 		r->react(s,dt);// for each reaction r react on the species vector s
-		std::cout<<"After reacting: "<< get_str_concentrations()<<'\n';
+		// std::cout<<"After reacting: "<< get_str_concentrations()<<'\n';
 	}
 }
 
@@ -239,10 +239,8 @@ void Species::diffuse(vec2d* pos, double area, double dt){
 			conc_out = gsl_matrix_get(diffusible->conc,cell[0],cell[1]);
 			gsl_matrix_set(diffusible->conc,cell[0],cell[1],
 			    conc_out - k_diff*dt*(conc_out - conc)*area/(backbone.size()*diffusible->voxel_length()*diffusible->voxel_length())); // area correction to conserve total number of molecules
-				conc += k_diff*dt*(conc_out - conc); // assumes the backbone is inscribed in the bacterium (i.e. no requirement for area correction)
+				conc += k_diff*dt*(conc_out - conc)/backbone.size(); // assumes the backbone is inscribed in the bacterium (i.e. no requirement for area correction)
 			}
-
-	conc /= backbone.size(); // average concentration change (preserving total number of molecules exchanged see notes) 
 }
 
 // Reaction functions children of the abstract class Reaction

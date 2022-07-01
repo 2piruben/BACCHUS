@@ -71,6 +71,7 @@ public:
 	void set_type(int& type_);
 	void set_growth_rate(double );
 	int get_type();
+	void set_type(int);
 	Cytoplasm cyto; // containing species and reactions through the class cytoplasm
 
 	int get_id(){return id;};

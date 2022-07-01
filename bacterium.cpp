@@ -91,6 +91,10 @@
 	int bacterium::get_type(){
 		return type;
 	}
+	
+	void bacterium::set_type(int type_){
+		type = type_;
+	}
 
 	vec2d bacterium::get_centre(){
 		return (pos[0]+pos[1])/2.0;

@@ -5,34 +5,45 @@ int main(int argc, char* argv[]){
 
 	int nutrient_int,growth_int;
 
-	// Defining cytoplasmic species
-	Cytoplasm cyto;
-	nutrient_int = cyto.add_species("nutrient_in",0.0);
-	cyto.make_species_diffusible("nutrient_in",100.0); // nutrient will increase through absorption
-	growth_int = cyto.add_growth_rate_modifier("growth_rate_modifier",1.0); // dummy species to control growth
+	// Defining cytoplasmic species cooperator and cheater
+	Cytoplasm cyto_coop, cyto_cheater;
+	nutrient_int = cyto_coop.add_species("shared_good",0.0);	
+	nutrient_int = cyto_cheater.add_species("shared_good",0.0);	
+	cyto_coop.make_species_diffusible("shared_good",10.0); // nutrient will increase through absorption
+	cyto_cheater.make_species_diffusible("shared_good",10.0); // nutrient will increase through absorption
+	growth_int = cyto_coop.add_growth_rate_modifier("growth_rate_modifier",1.0); // dummy species to control growth
+	growth_int = cyto_cheater.add_growth_rate_modifier("growth_rate_modifier",1.0); // dummy species to control growth
 	
 	// Defining cytoplasmic reactions
-	LinearReaction LR1(-0.001,nutrient_int,nutrient_int); // consumption of nutrient, it should be replace by a Hill Function at some point
-	HillReaction HR1(1,3,2,nutrient_int,growth_int); // increase of growth rate with nutrient
-	LinearReaction LR2(-0.001,growth_int,growth_int); //  natural decay of growth_rate (in the absence of nutrient) 
+	ConstantReaction C1(10.0,nutrient_int,nutrient_int); // production of shared good
+	LinearReaction LR1(-1.0,nutrient_int,nutrient_int); // consumption of shared good
+	HillReaction HR1(10,3,2,nutrient_int,growth_int); // increase of growth rate with shared_good
+	LinearReaction LR2(-10.0,growth_int,growth_int); //  natural decay of growth_rate (in the absence of shared_good) 
 	
-	// Adding reactions to cytoplas,
-	cyto.add_reaction(&LR1);
-	cyto.add_reaction(&HR1);
-	cyto.add_reaction(&LR2);
+	// Adding reactions to cooperator cytoplasm,
+	cyto_coop.add_reaction(&C1);
+	cyto_coop.add_reaction(&LR1);
+	cyto_coop.add_reaction(&HR1);
+	cyto_coop.add_reaction(&LR2);
+
+	// Adding reactions to cheater cytoplasm,
+	cyto_cheater.add_reaction(&LR1);
+	cyto_cheater.add_reaction(&HR1);
+	cyto_cheater.add_reaction(&LR2);
 
 	//  Initializing cells with the defined cytoplasm
 	Population colony(10,"pars.in");
-	colony.initialize_two(cyto);
+	colony.initialize_two_coopcheat(cyto_coop, cyto_cheater, 1,2);
 
 	// Initializing dish with the created colony
-	Dish dish(colony,100,10);
-	dish.add_chemical("nutrient_out",200,100.0,0.001); // diffusible nutrient
-	dish.set_chemical_gaussianprofile("nutrient_out",1,1,1000,0.2); // Initial concentration of nutrient in the dish
-	dish.link_chemical_bacterium("nutrient_out","nutrient_in"); // linking cytoplasmic and diffusible nutrient
+	Dish dish(colony,200,20);
+	dish.add_chemical("shared_good_out",0,1000.0,0.0001); // diffusible nutrient
+
+	// dish.set_chemical_gaussianprofile("nutrient_out",1,1,1000,0.2);  Initial concentration of nutrient in the dish
+	dish.link_chemical_bacterium("shared_good_out","shared_good"); // linking cytoplasmic and diffusible nutrient
 
 	// Simulation time parameters
-	double totaltime = 8; //8 
+	double totaltime = 11; //8 
 	double recordtimestep = 0.1;
 	double nextrecordtime = recordtimestep;
 	

@@ -88,6 +88,39 @@
 	}
 
 
+	void Population::initialize_two_coopcheat(Cytoplasm cyto_coop, Cytoplasm cyto_cheat, double growth_coop, double growth_cheat){ // start Population with two parallel bacteria
+		std::cout<<"Initizalizing Population...\n";
+		vec2d posinit1,posinit2;
+		double angleinit = 3.14159/4;
+		posinit1[0] = 0;
+		posinit1[1] = 0;
+		posinit2[0] = length*cos(angleinit);
+		posinit2[1] = length*sin(angleinit);
+		std::cout<<"Init cooperator "<< posinit1[0] <<' '<< posinit1[1]<<'\n';
+		cells.emplace_back(next_id(), r, posinit1, posinit2, growth_coop*(1+gsl_ran_gaussian(rng,0.2)), 2.0,mem, friction_trans, springk, cyto_coop);
+		cells.back().set_type(0); // cooperator is type 0
+		// cells.front().cyto.add_species(1.0,"GFP");
+		// HillRepReaction HR1(1,1,1,0,0);
+		// cells.front().cyto.add_reaction(&HR1);
+		// cells.front().cyto.react(0.1);
+		// cells.front().cyto.print();
+
+		posinit1[0] = 4*0.2*cos(angleinit);
+		posinit1[1] = 0;
+		posinit2[0] = length*cos(angleinit)+4*0.2*cos(angleinit);
+		posinit2[1] = length*sin(angleinit);
+
+		std::cout<<"Init cheater "<< posinit1[0] <<' '<< posinit1[1]<<'\n';
+		cells.emplace_back(next_id(), r, posinit1, posinit2, growth_cheat*(1+gsl_ran_gaussian(rng,0.2)), 2.0,mem, friction_trans, springk, cyto_cheat);
+		cells.back().set_type(1); // cheater is type 1
+		for(std::list<bacterium>::iterator cell_ptr = cells.begin(); cell_ptr != cells.end(); ++cell_ptr){
+		// adding pointer to the cells to the alive list
+			cells_alive.push_back(&*cell_ptr);	
+		}
+	}
+
+
+
 
 	void Population::evolve(){ // evolve the popualtion a time step dt
 		/// growth and division

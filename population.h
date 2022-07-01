@@ -46,6 +46,7 @@ class Population{
 		double timestep();
 		double currenttime();
 		void initialize_two(Cytoplasm);
+		void initialize_two_coopcheat(Cytoplasm cyto_coop, Cytoplasm cyto_cheat, double growth_coop, double growth_cheat);
 		void evolve();
 	    void print_population();
 	    void save();
