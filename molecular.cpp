@@ -6,27 +6,27 @@ Cytoplasm::Cytoplasm(){
 	growth_rate_idx = -1; // negative means that there is not growth rate modifier
 }
 
-Cytoplasm::Cytoplasm(const Cytoplasm &old_cytoplasm){ // custom copy of cytoplasm
-	// std::cout<<"Custom constuctor Cytoplasm\n";
-	dim_s = old_cytoplasm.dim_s;
-	dim_r = old_cytoplasm.dim_r;
-	growth_rate_idx = old_cytoplasm.growth_rate_idx; // negative means that there is not growth rate modifier
-	diff = old_cytoplasm.diff;
+// Cytoplasm::Cytoplasm(const Cytoplasm &old_cytoplasm){ // custom copy of cytoplasm
+// 	// std::cout<<"Custom constuctor Cytoplasm\n";
+// 	dim_s = old_cytoplasm.dim_s;
+// 	dim_r = old_cytoplasm.dim_r;
+// 	growth_rate_idx = old_cytoplasm.growth_rate_idx; // negative means that there is not growth rate modifier
+// 	diff = old_cytoplasm.diff;
 
-	for(auto & ss: old_cytoplasm.s){
-		s.push_back(ss);
-	}
-	for(auto & name: old_cytoplasm.s_names){
-		s_names.push_back(name);
-	}
-	for(auto reaction: old_cytoplasm.reactions){
-		reactions.push_back(reaction);
-	}
-	for(auto & rname: old_cytoplasm.r_names){
-		r_names.push_back(rname);
-	}
-	//std::cout<<"rsize"<<reactions.size()<<'\n';
-}
+// 	for(auto & ss: old_cytoplasm.s){
+// 		s.push_back(ss);
+// 	}
+// 	for(auto & name: old_cytoplasm.s_names){
+// 		s_names.push_back(name);
+// 	}
+// 	for(auto reaction: old_cytoplasm.reactions){
+// 		reactions.push_back(reaction);
+// 	}
+// 	for(auto & rname: old_cytoplasm.r_names){
+// 		r_names.push_back(rname);
+// 	}
+// 	//std::cout<<"rsize"<<reactions.size()<<'\n';
+// }
 
 void Cytoplasm::add_reaction(Reaction* r){
 	reactions.push_back(r);	
@@ -104,9 +104,10 @@ std::string Cytoplasm::get_str_concentrations(){
 
 void Cytoplasm::react(double dt){
 	// std::cout<<"Entering print\n";
-	// std::cout<<"Entering vector with "<<reactions.size()<<" elements\n";
+	std::cout<<"Reacting in cell with content "<<get_str_concentrations()<<'\n';
 	for (auto & r: reactions){
 		r->react(s,dt);// for each reaction r react on the species vector s
+		std::cout<<"After reacting: "<< get_str_concentrations()<<'\n';
 	}
 }
 
@@ -252,12 +253,14 @@ Reaction::Reaction(){};
 HillReaction::HillReaction(double A_, double K_, double n_, int idx_in_, int idx_out_){
 	A = A_;
 	K = K_;
+	n = n_;
 	idx_out = idx_out_;
 	idx_in = idx_in_;
 }
 HillReaction::~HillReaction(){};
 void HillReaction::react(vec_species& s, double dt){
-	s[idx_out].increase_conc(dt*A/(1+pow(s[idx_in].get_conc()/K,(-1.0*n)))); 	
+	//std::cout<<"Calling Hill Reaction with pars"
+	s[idx_out].increase_conc(dt*A/(1+pow(s[idx_in].get_conc()*K,(-1.0*n)))); 	
 }
 
 // Linear reaction

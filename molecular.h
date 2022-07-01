@@ -108,7 +108,7 @@ class Cytoplasm{//Class controlling the molecular content of a bacterium.
 	public:
 
 		Cytoplasm();
-		Cytoplasm(const Cytoplasm &c);
+		// Cytoplasm(const Cytoplasm &c);
 		void add_reaction(Reaction* r); // add reaction acting on species idx
 		int add_growth_rate_modifier(std::string name,double conc); // add a dummy species that will track the change in growth_rate
 		int add_species(std::string name,double conc); // add a chemical species to the cytoplasm
@@ -129,9 +129,7 @@ class Cytoplasm{//Class controlling the molecular content of a bacterium.
 
 		vec_species s; // molecular species to track 
 		// vec_species s_diff; // molecular species to track that are diffusable
-		vec_string s_names; // names of molecular species to track 
 		vec_p_reaction reactions; // reactions that modifiy species 
-		vec_vec_string r_names; // names of the reactions
 		int growth_rate_idx; // variable in s[] used to track the modifier on growth_rate
 		int dim_s; // number of species
 		int dim_r; // number of reactions

@@ -285,7 +285,7 @@
 	}
 
 	void bacterium::diffusecyto(double dt){
-		std::cout<<"Bacterium "<<id<<"Is diffusable? "<<cyto.is_diffusible()<<'\n';
+		//std::cout<<"Bacterium "<<id<<"Is diffusable? "<<cyto.is_diffusible()<<'\n';
 		if (cyto.is_diffusible()){
 			cyto.diffuse(pos,get_area(), dt);
 		}

@@ -8,13 +8,13 @@ int main(int argc, char* argv[]){
 	// Defining cytoplasmic species
 	Cytoplasm cyto;
 	nutrient_int = cyto.add_species("nutrient_in",0.0);
-	cyto.make_species_diffusible("nutrient_in",0.1); // nutrient will increase through absorption
+	cyto.make_species_diffusible("nutrient_in",100.0); // nutrient will increase through absorption
 	growth_int = cyto.add_growth_rate_modifier("growth_rate_modifier",1.0); // dummy species to control growth
 	
 	// Defining cytoplasmic reactions
-	LinearReaction LR1(-1,nutrient_int,nutrient_int); // consumption of nutrient, it should be replace by a Hill Function at some point
-	HillReaction HR1(1,1,1,nutrient_int,growth_int); // increase of growth rate with nutrient
-	LinearReaction LR2(-1,growth_int,growth_int); //  natural decay of growth_rate (in the absence of nutrient) 
+	LinearReaction LR1(-0.001,nutrient_int,nutrient_int); // consumption of nutrient, it should be replace by a Hill Function at some point
+	HillReaction HR1(1,3,2,nutrient_int,growth_int); // increase of growth rate with nutrient
+	LinearReaction LR2(-0.001,growth_int,growth_int); //  natural decay of growth_rate (in the absence of nutrient) 
 	
 	// Adding reactions to cytoplas,
 	cyto.add_reaction(&LR1);
@@ -27,8 +27,8 @@ int main(int argc, char* argv[]){
 
 	// Initializing dish with the created colony
 	Dish dish(colony,100,10);
-	dish.add_chemical("nutrient_out",10,10.0,0.001); // diffusible nutrient
-	dish.set_chemical_gaussianprofile("nutrient_out",1,1,10,1); // Initial concentration of nutrient in the dish
+	dish.add_chemical("nutrient_out",200,100.0,0.001); // diffusible nutrient
+	dish.set_chemical_gaussianprofile("nutrient_out",1,1,1000,0.2); // Initial concentration of nutrient in the dish
 	dish.link_chemical_bacterium("nutrient_out","nutrient_in"); // linking cytoplasmic and diffusible nutrient
 
 	// Simulation time parameters
