@@ -96,6 +96,7 @@
 		for(auto cell_ptr = cells_alive.begin(); cell_ptr!=cells_alive.end();) {
 			(*cell_ptr)->reset_force();
 			(*cell_ptr)->cyto.react(dt);
+			(*cell_ptr)->diffusecyto(dt);
 			(*cell_ptr)->grow(dt);
 			if ((*cell_ptr)->division_ready()) 
     		{// division
@@ -150,10 +151,10 @@
     	}
     }
 
-    void Population::save_population(){
-    	std::filesystem::create_directory("output"); 
+    void Population::save(){
+    	std::filesystem::create_directory("output/colony"); 
     	ofilename.str("");
-    	ofilename<<"output/population"<<std::setprecision(5)<<time<<".out";
+    	ofilename<<"output/colony/colony_"<<std::setprecision(5)<<time<<".out";
     	trajfile.open(ofilename.str()); // output trajectory
     	for(std::list<bacterium*>::iterator cell_ptr = cells_alive.begin(); cell_ptr != cells_alive.end(); ++cell_ptr) {
     		trajfile<<(*cell_ptr)->get_str_physics()<<' ';
@@ -161,3 +162,11 @@
     	}
     	trajfile.close();
     }
+
+	bool Population::link_diffusible_bacterium(std::string chem_in, Diffusible* diffusible_){
+		bool success = false;
+		for (auto& bac: cells){
+			success = (bac.link_diffusible(chem_in,diffusible_)|| success);
+		}
+		return success;
+	}

@@ -1,60 +1,72 @@
 #include "dish.h"
+#include "diffusible.h"
 #define REFLECTIVE_BC 0
 #define ABSORVING_BC 1
 #define INITIAL_BC 2
-
-Diffusable::Diffusable(){};
-
-Diffusable::Diffusable(std::string name_, double diff_coeff_, double decay_coeff_, double init_conc, int N_){
-	N_ = N;
-	diff_coeff = diff_coeff_;
-	name = name_;
-	decay_coeff = decay_coeff_;
-	conc = gsl_matrix_alloc(N,N);
-	auxconc = gsl_matrix_alloc(N,N);
-
-	// Creating views that will be used to calculate diffusion later on
-	row0 = gsl_matrix_submatrix(conc,0,0,N,1);
-	row1 = gsl_matrix_submatrix(conc,1,0,N,1);
-	rowN = gsl_matrix_submatrix(conc,N-1,0,N,1);
-	rowNm = gsl_matrix_submatrix(conc,N-2,0,N,1);
-	col0 = gsl_matrix_submatrix(conc,0,0,N,1);
-	col1 = gsl_matrix_submatrix(conc,0,1,1,N);
-	colN = gsl_matrix_submatrix(conc,0,N-1,1,N);
-	colNm = gsl_matrix_submatrix(conc,0,N-2,1,N);
-	left = gsl_matrix_submatrix(conc,1,0,N-2,N-2);
-	right = gsl_matrix_submatrix(conc,1,2,N-2,N-2);
-	top = gsl_matrix_submatrix(conc,0,1,N-2,N-2);
-	bottom = gsl_matrix_submatrix(conc,2,1,N-2,N-2);
-	centre = gsl_matrix_submatrix(conc,1,1,N-2,N-2);
-	auxleft = gsl_matrix_submatrix(auxconc,1,0,N-2,N-2);
-	auxright = gsl_matrix_submatrix(auxconc,1,2,N-2,N-2);
-	auxtop = gsl_matrix_submatrix(auxconc,0,1,N-2,N-2);
-	auxbottom = gsl_matrix_submatrix(auxconc,2,1,N-2,N-2);
-	auxcentre = gsl_matrix_submatrix(auxconc,1,1,N-2,N-2);
-
-};
 
 
 Dish::Dish(){
 	N = 100;
 	dim = 0;
-	dt = 0.01;
+	dt = 0.001;
+	t = 0;
+	L = 10;
 }
 
-Dish::Dish(Population& colony_, int N_){
+Dish::Dish(Population& colony_, int N_, double L_){
 	N = N_;
 	colony = &colony_;
+	t = 0;
+	dt = 0.001;
+	L = L_;
 }
 
 void Dish::add_chemical(std::string name, double conc, double coeff, double decay){
-	diffusables.emplace_back(name,coeff,decay,conc,N); // adding diffusible constants
+	diffusibles.emplace_back(name,coeff,decay,conc,N,L); // adding diffusible constants
 }
+
+void Dish::set_chemical_gaussianprofile(std::string name_, double x_c, double y_c, double max, double sigma){
+	bool success = false;
+	double x,y;
+	for (auto& diffusible: diffusibles){
+		if (diffusible.name == name_){
+			success = true;
+			for(int i=0; i<N; i++){
+				for (int j=0; j<N; j++){
+					x = grid_to_dish_x(j);
+					y = grid_to_dish_y(i);
+					gsl_matrix_set(diffusible.conc,i,j,max*exp(-((x-x_c)*(x-x_c)+(y-y_c)*(y-y_c))/(2*sigma*sigma)));
+				}
+			}
+		}
+	}
+	if(success == false){
+		std::cout<<"WARNING: Chemical species "<<name_<<" not found in Dish"<<'\n';
+	}
+}
+
+void Dish::link_chemical_bacterium(std::string chem_out, std::string chem_in){
+
+	bool success = false;
+
+	for (auto& diffusible: diffusibles){
+		if (diffusible.name == chem_out){
+			success = colony->link_diffusible_bacterium(chem_in, &diffusible);
+		}
+	}
+
+	if(success == false){
+		std::cout<<"WARNING: Not found pair of chemicals to link "<<chem_out<<' '<<chem_in<<'\n';
+	}
+}
+
+
 
 void Dish::evolve(){
 	colony->evolve(); // eventually some rules on timesteps should be set
-	
-	for(auto& M: diffusables){
+	t += dt;
+
+	for(auto& M: diffusibles){
 
 		if(boundary_condition == REFLECTIVE_BC){ // if reflective boundaries set same vaue in two row/columns from the border
 			gsl_matrix_memcpy(&M.row0.matrix,&M.row1.matrix);
@@ -65,14 +77,16 @@ void Dish::evolve(){
 
 	gsl_matrix_memcpy(M.auxconc,M.conc); // two matrices to avoid overwriting in incremental sum
 	///// Implementation of finite difference Laplacian
-	gsl_matrix_scale(M.auxconc,L*L/N/N*dt);
+	gsl_matrix_scale(M.auxconc,M.diff_coeff*L*L/N/N*dt);
 	gsl_matrix_add(&M.centre.matrix,&M.auxleft.matrix);
 	gsl_matrix_add(&M.centre.matrix,&M.auxright.matrix);
 	gsl_matrix_add(&M.centre.matrix,&M.auxtop.matrix);
 	gsl_matrix_add(&M.centre.matrix,&M.auxbottom.matrix);
 	gsl_matrix_scale(M.auxconc,4.0);
 	gsl_matrix_sub(&M.centre.matrix,&M.auxcentre.matrix);
-	// reaction loop 
+	//// Degradation of diffusible
+	gsl_matrix_scale(&M.centre.matrix,(1-M.decay_coeff*dt));
+	// difusible reaction loop 
 	//...
 	}
 }
@@ -83,7 +97,7 @@ void Dish::set_reflective_boundary(){
 
 void Dish::set_absorving_boundary(){
 	boundary_condition = ABSORVING_BC;
-	for(auto& M: diffusables){
+	for(auto& M: diffusibles){
 		gsl_matrix_set_all(&M.row0.matrix,0);
 		gsl_matrix_set_all(&M.rowN.matrix,0);
 		gsl_matrix_set_all(&M.col0.matrix,0);
@@ -93,10 +107,47 @@ void Dish::set_absorving_boundary(){
 
 void Dish::set_constant_boundary(){
 	boundary_condition = INITIAL_BC;
-	for(auto& M: diffusables){
+	for(auto& M: diffusibles){
 		gsl_matrix_memcpy(&M.row0.matrix,&M.row1.matrix);
 		gsl_matrix_memcpy(&M.col0.matrix,&M.col1.matrix);
 		gsl_matrix_memcpy(&M.rowN.matrix,&M.rowNm.matrix);
 		gsl_matrix_memcpy(&M.colN.matrix,&M.colNm.matrix);
+	}
+}
+
+double Dish::grid_to_dish_x(int j){
+	return L/N*(0.5+j) - L/2;
+}
+
+double Dish::grid_to_dish_y(int i){
+	return L/2 - L/N*(0.5+i);
+}
+
+int Dish::dish_to_grid_j(double x){
+	return floor((x-L/2)/(L/N));//	
+}
+int Dish::dish_to_grid_i(double y){
+	return floor((L/2-y)/(L/N));//	
+}
+
+void Dish::save(){
+	for(int i = 0; i<diffusibles.size(); i++){
+		std::filesystem::create_directory("output/diffusible");
+		ofilename.str("");
+		std::cout<<"t:"<<t<<'\n';
+		ofilename<<"output/diffusible/diffusible_"<<i<<'_'<<std::setprecision(5)<<t<<".out";
+    	trajfile.open(ofilename.str()); // output trajectory
+		for(int j=0; j<N; j++){
+			for(int k=0;k<N; k++){
+				trajfile<<gsl_matrix_get(diffusibles[i].conc,j,k);
+				if(k<N-1){
+					trajfile<<' ';
+				}
+			}
+			if(j<N-1){
+				trajfile<<'\n';
+			}
+		}
+		trajfile.close();
 	}
 }

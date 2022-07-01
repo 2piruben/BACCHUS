@@ -11,9 +11,9 @@ RM = rm -f
 
 
 main: main.o
-	$(GPP) $(CFLAGS) $(LFLAGS) -o main main.o bacterium.o algebra2d.o population.o molecular.o dish.o
+	$(GPP) $(CFLAGS) $(LFLAGS) -o main main.o bacterium.o algebra2d.o population.o molecular.o dish.o diffusible.o
 
-main.o: main.cpp bacterium.o population.o algebra2d.o molecular.o dish.o
+main.o: main.cpp bacterium.o population.o algebra2d.o molecular.o dish.o diffusible.o
 	$(GPP) $(CFLAGS) -c main.cpp
 
 dish.o: dish.cpp dish.h population.o
@@ -28,6 +28,9 @@ bacterium.o: bacterium.cpp bacterium.h algebra2d.o molecular.o
 molecular.o: molecular.cpp molecular.h
 	$(GPP) $(CFLAGS) -c molecular.cpp
 
+diffusible.o: diffusible.cpp diffusible.h
+	$(GPP) $(CFLAGS) -c diffusible.cpp
+
 algebra2d.o: algebra2d.cpp algebra2d.h
 	$(GPP) $(CFLAGS) -c algebra2d.cpp
 
@@ -35,8 +38,8 @@ all:
 	$(MAKE) -C $(LANGILFOLDER)
 
 cleanout:
-	$(RM) output/*.out
-	$(RM) output/*.png
+	$(RM) -r output/**/*.out
+	$(RM) -r output/**/*.png
 	$(RM) log
 
 clean:

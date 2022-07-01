@@ -43,7 +43,6 @@
 		cyto = cyto_;
 	}
 
-
 /// Function returning or setting private atributes 
 
 	void bacterium::get_centre(vec2d &output){
@@ -74,6 +73,10 @@
 
 	double bacterium::get_length(){
 		return dist(pos[0],pos[1]);
+	}
+
+	double bacterium::get_area(){
+		return dist(pos[0],pos[1])*r + 3.14159*r*r;
 	}
 
 	double bacterium::get_length0(){
@@ -109,13 +112,27 @@
 		return pos[1];
 	}
 
-	void bacterium::set_type(int type_){
+	void bacterium::set_type(int& type_){
 		type = type_;
 	}
 
 	void bacterium::set_growth_rate(double growth_rate_){
 		growth_rate = growth_rate_;
 	}
+
+	void bacterium::set_id(int& new_id){
+		id = new_id;
+	}
+
+	void bacterium::set_pos(vec2d& pole1, vec2d& pole2){
+		pos[0][0] = pole1[0];
+		pos[0][1] = pole1[1];
+		pos[1][0] = pole2[0];
+		pos[1][1] = pole2[1]; 
+		l0 = dist(pole1,pole2); // initial target length of bacterium
+	}
+
+
 
 /// Functions managing reference systems of vectors with respect to bacteria
 
@@ -239,14 +256,18 @@
 	bacterium bacterium::get_daughter1(int id){
 		vec2d pole1,pole2;
 		get_daughter1_poles(pole1,pole2);
-		bacterium bb(id,r,pole1,pole2, growth_rate,2.0, mem, friction_trans, springk, cyto);
+		bacterium bb = *this;
+		bb.set_pos(pole1,pole2);
+		bb.set_id(id);
 		return bb;
 	}
 
 	bacterium bacterium::get_daughter2(int id){
 		vec2d pole1,pole2;
 		get_daughter2_poles(pole1,pole2);
-		bacterium bb(id,r,pole1,pole2, growth_rate,2.0, mem, friction_trans, springk, cyto);
+		bacterium bb = *this;
+		bb.set_pos(pole1,pole2);
+		bb.set_id(id);
 		return bb;
 	}
 
@@ -258,6 +279,18 @@
     	ssphys<<force[1][0]<<' '<<force[1][1];
     	return ssphys.str();
 	}
+
+	bool bacterium::link_diffusible(std::string name, Diffusible* diffusible){
+		return cyto.link_diffusible(name,diffusible);
+	}
+
+	void bacterium::diffusecyto(double dt){
+		std::cout<<"Bacterium "<<id<<"Is diffusable? "<<cyto.is_diffusible()<<'\n';
+		if (cyto.is_diffusible()){
+			cyto.diffuse(pos,get_area(), dt);
+		}
+	}
+
 
 void update_force_between(bacterium &b1, bacterium &b2){
 	vec2d v1,v2,relation;

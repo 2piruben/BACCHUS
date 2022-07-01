@@ -48,7 +48,8 @@ class Population{
 		void initialize_two(Cytoplasm);
 		void evolve();
 	    void print_population();
-	    void save_population();
+	    void save();
+		bool link_diffusible_bacterium(std::string chem_in, Diffusible* diffusible_);
 
 
 };

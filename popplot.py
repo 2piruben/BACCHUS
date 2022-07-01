@@ -70,7 +70,7 @@ def plotbac(posx, posy, angle, length, radius, color = 'orange', force = None):
 	 ]
 
 	path = Path(verts, codes)
-	patch = patches.PathPatch(path, facecolor='orange', edgecolor = 'k', lw=2)
+	patch = patches.PathPatch(path, facecolor='orange', edgecolor = 'k', lw=2, zorder = 0)
 	ax.add_patch(patch)
 
 	# plt.plot([posx],[posy],'bo')
@@ -78,31 +78,50 @@ def plotbac(posx, posy, angle, length, radius, color = 'orange', force = None):
 	if force:
 		plt.plot([],[])
 
-
-foldername = 'output/'
-files = os.listdir(foldername)
+foldername_output = 'output/'
+foldername_colony = foldername_output+'colony/'
+foldername_diffusible = foldername_output+'diffusible/'
+files_colony = os.listdir(foldername_colony)
+files_diffusible = os.listdir(foldername_colony)
 timelist = []
-for filename in files:
+for filename in files_colony:
 #	if filename[0:10] == 'population'
-	if ((filename[0:10] == 'population') and (filename[-4:]=='.out')):
-		timelist.append(filename[10:-4])
-# print('Unsorted list',timelist)
+	if ((filename[0:6] == 'colony') and (filename[-4:]=='.out')):
+		timelist.append(filename[7:-4])
+print('Unsorted list',timelist)
 timelist = sorted(timelist,key = lambda x: float(x))
 # print('Sorted list',timelist)
 	
 print("Creating Frames...")
 for it,timepoint in enumerate(tqdm(timelist)):
-	file = np.loadtxt(foldername+'population'+timepoint+'.out')
-	for bac in file:
+	file_bac = np.loadtxt(foldername_colony+'colony_'+timepoint+'.out')
+	for bac in file_bac:
 		plotbac(bac[2],bac[3],bac[4],bac[5],0.2)
 	ax = plt.gca()
+
+	vmin = 0
+	vmax = 5
+	maxalpha = 0.8 # most opaque value of the morphogen
+	file_diff = np.loadtxt(foldername_diffusible+'diffusible_0_'+timepoint+'.out')
+	alphas_diff = file_diff
+	alphas_diff[alphas_diff>vmax] = vmax
+	alphas_diff[alphas_diff<vmin] = vmin
+	alphas_diff = (alphas_diff-vmin)/(vmax-vmin)*maxalpha
+	plt.imshow(file_diff,cmap = 'Blues',vmin = 0, vmax = 5,alpha = alphas_diff,
+			   zorder = 10, extent = [-5,5,-5,5])
+
 	ax.set_aspect('equal')
-	plt.xlim(-10,10)
-	plt.ylim(-10,10)
+	plt.xlim(-5,5)
+	plt.ylim(-5,5)
+
 	plt.title('t = {}'.format(timepoint))
-	plt.savefig(foldername + "/file%02d.png" % it)
+
+
+	plt.savefig(foldername_output + "/file%02d.png" % it)
+
+
 	plt.clf()
-os.chdir(foldername)
+os.chdir(foldername_output)
 subprocess.call([
 	'ffmpeg', '-framerate', '8', '-i', 'file%02d.png', '-r', '30', '-pix_fmt', 'yuv420p',
 	'output.mp4'])

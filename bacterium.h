@@ -19,6 +19,7 @@
 #include <unistd.h>
 #include <string>
 #include "molecular.h"
+#include "diffusible.h"
 
 
 // class chemical{
@@ -57,6 +58,7 @@ public:
 	void get_orientation(vec2d &output);
 	void get_length(double &length_);
 	double get_length();
+	double get_area();
 	void get_angle(double &angle_);
 	double get_length0();
 	double get_angle();
@@ -66,12 +68,14 @@ public:
 	vec2d get_current_force_2();
 	vec2d get_pole1();
 	vec2d get_pole2();
-	void set_type(int type_);
-	void set_growth_rate(double);
+	void set_type(int& type_);
+	void set_growth_rate(double );
 	int get_type();
 	Cytoplasm cyto; // containing species and reactions through the class cytoplasm
 
 	int get_id(){return id;};
+	void set_id(int& new_id);
+	void set_pos(vec2d& pole1, vec2d& pole2); //
 	double radius_bac(){return r;};
 	// We want functions that transform points to 3 different coordinate systems
 	// glob -> with respect to the dish (centered at 0,0)
@@ -92,6 +96,8 @@ public:
 	void get_daughter2_poles(vec2d& p1, vec2d& p2);
 	bacterium get_daughter1(int id = -1);
 	bacterium get_daughter2(int id = -1);
+	bool link_diffusible(std::string name, Diffusible* diffusible);
+	void diffusecyto(double dt); // transmembrane diffusion
 	std::string get_str_physics();
 
 	friend void update_force_between(bacterium &b1, bacterium &b2);

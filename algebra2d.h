@@ -4,7 +4,6 @@
 #include<math.h>
 #include<iostream>
 
-//typedef std::valarray<double> vec2d[2];
 
 struct vec2d {
 
@@ -104,5 +103,24 @@ double crossprod(vec2d v1, vec2d v2);
 vec2d dist_linepoint(vec2d line, vec2d point);
 vec2d vnormal(vec2d v1);
 vec2d rotate(vec2d v1, double angle);
+
+
+
+////////////////////////////////////////////
+
+struct vec2d_int {
+	int v[2];
+
+	vec2d_int(int i=0, int j=0){
+		v[0]=i;
+		v[1]=j;
+	}
+
+	int& operator[](const int index)
+	{
+		return v[index];
+	}
+
+};
 
 #endif
