@@ -21,6 +21,4 @@ Bacchus is a hybrid agent-based model simulating bacterial colonies in which eac
 
 # TODO list:
 
-- Introduce a class to manage diffusible molecules
-- Introduce a class to manage intracellular reactions
 - Change the ".in" file to a ".xml" or ".json"
